@@ -1,0 +1,20 @@
+{
+  "name": "tree-sitter-r5rs",
+  "version": "0.1.0",
+  "description": "r5rs-tree-sitter grammar",
+  "main": "grammar.js",
+  "scripts": {
+    "test": "tree-sitter test"
+  },
+  "author": "thchha",
+  "license": "MIT",
+  "dependencies": {
+    "nan": "^2.16.0"
+  },
+  "tree-sitter": [
+    {
+      "scope": "source.scheme",
+      "file-types": ["scm", "ss"]
+    }
+  ]
+}

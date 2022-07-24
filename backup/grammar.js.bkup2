@@ -1,0 +1,402 @@
+const PAREN_LEFT           =  "(";
+const PAREN_RIGHT          =  ")";
+const COMMENT_PARENT_START = "#(";
+const QUOTE                =  "'";
+const QQUOTE               =  "`";
+const UNQUOTE              =  ",";
+const SPLICE               =  ",@";
+const CONS                 =  ".";
+
+module.exports = grammar ({
+
+  name: "R5RS",
+
+  inline: $ => [
+    $.expression,
+    $.dec_num,
+  ],
+
+  conflicts: $ => [
+  ],
+
+  supertypes: $ => [
+    $.definition,
+    $.number
+  ],
+
+  rules: {
+    // this starts the grammar for the file content.
+    // The actual datum appears after declaring the primitives.
+    program: $ => repeat($._scope),
+
+    _scope: $ => choice(
+      $.expression,
+      $.definition,
+    ),
+
+    _body: $ => seq(repeat($.definition), $._sequence),
+    _sequence: $ => seq(repeat($.expression), $.expression),
+
+    definition: $ => choice(
+      $.binding_definition,
+      $.procedure_definition,
+      $.syntax_definition,
+      $.begin
+    ),
+
+    begin: $ => seq("(begin", repeat1($._scope), ")"),
+
+    binding_definition: $ => seq(
+      "(define",
+      field("binding", $.identifier),
+      field("value", $.expression),
+      ")"
+    ),
+
+    procedure_definition: $ => seq(
+      "(define",
+      "(",
+      field("binding", $.identifier),
+      optional(
+        field("args",
+          choice(
+            repeat($.identifier),
+            seq($.identifier, ".:", $.identifier)))),
+      ")",
+      field("body", $._body),
+      ")"
+    ),
+
+    syntax_definition: $ => seq(
+      "(define-syntax",
+      $.identifier,
+      $.transformer,
+      ")"
+    ),
+
+    datum: $ => prec.left(-1, choice(
+      $.boolean,
+      $.number,
+      $.character,
+      $.string,
+      alias($.identifier, "symbol"),
+      $.list,
+      $.vector
+    )),
+
+    list: $ => choice(
+      seq("(", repeat($.datum), ")"),
+      seq("(", repeat1($.datum), ".:", $.datum, ")"),
+      $.abbreviation
+    ),
+
+    abbreviation: $ => seq(
+      /(['`,]?|,@)/,
+        $.datum
+      ),
+
+      vector: $ => seq("#(", repeat($.datum), ")"),
+
+      //////////////////
+      // EXPRESSIONS //
+      ////////////////
+
+      expression: $ => choice(
+        $.identifier,
+        $.quoted_datum,
+        $.boolean,
+        $.number,
+        $.character,
+        $.string,
+        $.procedure_call,
+        //$.lambda,
+        $.conditional,
+        $.assignment,
+        //$.derived_expr,
+        $.macro_use,
+        $.macro_block
+      ),
+
+      quoted_datum: $ => seq("'", $.datum),
+
+      procedure_call: $ => seq("(", $.expression, repeat($.expression), ")"),
+
+      //lambda: $ => seq(
+      //  "(lambda",
+      //  choice(
+      //    seq("(", repeat1($.variable), ")"),
+      //    $.variable,
+      //    seq("(", repeat1($.variable), ".:", $.variable, ")")
+      //  ),
+      //  $._body),
+
+
+      conditional: $ => seq(
+        "(if",
+        field("test", $.expression),
+        field("consequence", $.expression),
+        optional(field("alternative", $.expression)),
+        ")"
+      ),
+
+      assignment: $ => seq("(", "set!", field("binding", $.identifier), field("value", $.expression)),
+
+      //derived_expr: $ => choice(
+      //  seq("(cond", repeat1($._cond_clause), ")"),
+      //  seq("(cond", repeat($._cond_clause), "(else", $._sequence ,"))"),
+      //  seq("(case", $.expression, repeat1($._case_clause), ")"),
+      //  seq("(case", $.expression, repeat($._case_clause), "(else", $._sequence ,"))"),
+      //  seq("(and", repeat($.expression), ")"),
+      //  seq("(or", repeat($.expression), ")"),
+      //  seq("(let", "(", repeat($.bindings), ")", $._body, ")"),
+      //  seq("(let", $.variable, "(", repeat($.bindings), ")", $._body, ")"),
+      //  seq("(let*", "(", repeat($.bindings), ")", $._body, ")"),
+      //  seq("(letrec", "(", repeat($.bindings), ")", $._body, ")"),
+      //  seq("(begin", $._sequence, ")"),
+      //  seq("(do",
+      //    "(", repeat($._iteration), ")",
+      //    "(", field("test", $.expression), optional($._sequence), ")",
+      //    repeat(field("command", $.expression)), ")"),
+      //  seq("(delay", $.expression, ")"),
+      //  $.quasiquotation
+      //),
+
+      //_cond_clause: $ => choice(
+      //  seq("(", field("test", $.expression), optional($.expression),")"),
+      //  seq("(", field("test", $.expression), "=>", $.expression,")"),
+      //),
+
+      //_case_clause: $ => seq("(", "(", repeat($.datum), $._sequence, ")"),
+
+      bindings: $ => seq("(", $.identifier, $.expression, ")"),
+      _iteration: $ => seq(
+        "(",
+        $.identifier,
+        field("init", $.expression),
+        optional(field("step", $.expression)),
+        ")"
+      ),
+
+      macro_use: $ => prec.left(1, seq("(", $.identifier, repeat($.datum), ")")),
+      macro_block: $ => choice(
+        seq(
+          "(let-syntax",
+          "(", repeat(field("syntax", $.syntax_spec)), ")",
+          field("body", $.expression), ")"),
+        seq(
+          "(letrec-syntax",
+          "(", repeat(field("syntax", $.syntax_spec)), ")",
+          field("body", $.expression), ")"),
+      ),
+
+      syntax_spec: $ => seq("(", $.identifier, $.transformer, ")"),
+
+      quasiquotation: $ => choice(
+        seq("`", $._qq),
+        seq("(quasiquote", $._qq, ")")
+      ),
+
+      _qq: $ => prec.left(1, choice(
+        $.boolean, $.number, $.character, $.string, alias($.identifier, "symbol"),
+        $.expression,
+        choice(
+          seq("(", repeat($._qq_or_splice), ")"),
+          seq("(", repeat1($._qq_or_splice), ".:", $._qq, ")"),
+          seq("'", $._qq),
+          $.quasiquotation
+        ),
+        seq("#(", repeat($._qq_or_splice), ")"),
+        $.unquotation
+      )),
+
+      unquotation: $ => choice(
+        seq(",", $._qq),
+        seq("(unquote", $._qq, ")")
+      ),
+
+      _qq_or_splice: $ => choice(
+        $._qq,
+        seq(",@", $._qq),
+        seq("(unquote-splicing", $._qq, ")")
+      ),
+
+      ////////////
+      // MACRO //
+      //////////
+
+      transformer: $ => seq("(syntax-rules", "(", repeat($.identifier), ")", $.syntax_rule, ")"),
+
+      syntax_rule: $ => seq(
+        "(",
+        field("pattern", $.pattern),
+        field("template", $.template),
+        ")"
+      ),
+
+      pattern: $ => choice(
+        $.identifier, // TODO: do not allow "..."
+        seq("(", repeat($.pattern), ")"),
+        seq("(", repeat1($.pattern), ".", $.pattern, ")"),
+        seq("(", repeat($.pattern), $.pattern, "...", ")"),
+        seq("#(", repeat($.pattern), ")"),
+        seq("#(", repeat($.pattern), $.pattern, "...", ")"),
+        $.string, $.character, $.boolean, $.number
+      ),
+
+      template: $ => choice(
+        $.identifier, // TODO: do not allow "..."
+        seq("(", repeat($._template_elem), ")"),
+        seq("(", repeat1($._template_elem), ".", $.template, ")"),
+        seq("#(", repeat($._template_elem), ")"),
+        $.string, $.character, $.boolean, $.number
+      ),
+
+      _template_elem: $ => choice(
+        $.template,
+        seq($.template, "...")
+      ),
+
+      _token: $ => choice(
+        $.identifier,
+        $.boolean,
+        $.number,
+        $.character,
+        $.string,
+        PAREN_LEFT,
+        PAREN_RIGHT,
+        COMMENT_PARENT_START,
+        QUOTE,
+        QQUOTE,
+        UNQUOTE,
+        SPLICE,
+        CONS
+      ),
+
+      ///////////////
+      // KEYWORDS //
+      /////////////
+
+      identifier: $ => token(/([A-Za-z!$%&*/:<=>?^_~]{1}([A-Za-z0-9!$%&*/:<=>?^_~+\-@]|\.:)*|\.\.\.)/),
+
+      /////////////////
+      // PRIMITIVES //
+      ///////////////
+
+      boolean: $ => token(choice("#f", "#t")),
+      character: $ => token(choice(
+        /#\\[\S]/,
+        /#\\space/,
+        /#\\newline/
+      )),
+      // TODO:  function, which prevents quote and backslash, but escapes them.
+      // FIXME: should use character names.
+      string: $ => seq("\"", $.character ,"\""),
+
+      number: $ => choice(
+        $.binary_number,
+        $.octal_number,
+        $.decimal_number,
+        $.hexadecimal_number,
+      ),
+
+      binary_number: $ => seq(
+        /(#(b|B)(#(e|E|i|I))?|(#(e|E|i|I))?#(b|B))/,
+        choice(
+          $._real_b,
+          seq($._real_b, /@/, $._real_b),
+          seq($._real_b, /\+/, $._ureal_b),
+          seq($._real_b, /\-/, $._ureal_b, /i/),
+          seq($._real_b, /\+i/ ),
+          seq($._real_b, /\-i/ ),
+          seq(/\+/, $._ureal_b, /i/),
+          seq(/\-/, $._ureal_b, /i/),
+          /\+i/,
+          /\-i/
+        ),
+      ),
+
+      _real_b: $ => seq(optional( /[+\-]?/ ), $._ureal_b),
+      _ureal_b: $ => /([0-1]+#*|[0-1]+#*\/[0-1]+#*)/,
+
+      octal_number: $ => seq(
+        choice(
+          /(#o|#O)(#e|#E|#i|#I)?/,
+          /(#e|#E|#i|#I)?(#o|#O)/),
+        choice(
+          $._real_o,
+          seq($._real_o, /@/, $._real_o),
+          seq($._real_o, /\+/, $._ureal_o),
+          seq($._real_o, /\-/, $._ureal_o, /i/),
+          seq($._real_o, /\+i/ ),
+          seq($._real_o, /\-i/ ),
+          seq(/\+/, $._ureal_o, /i/),
+          seq(/\-/, $._ureal_o, /i/),
+          /\+i/,
+          /\-i/
+        ),
+      ),
+
+      _real_o: $ => seq(optional( /[+\-]?/ ), $._ureal_o),
+      _ureal_o: $ => /([0-7]+#*|[0-7]+#*\/[0-7]+#*)/,
+
+      decimal_number: $ => seq(
+        choice(
+          /(#(d|D))(#(e|E|i|I))?/,
+          /(#(e|E|i|I))?(#(d|D))/,
+        ),
+        $.dec_num,
+      ),
+
+      dec_num: $ => choice(
+        seq(/\+/, $._ureal_d, /i/),
+        seq(/\-/, $._ureal_d, /i/),
+        seq($._real_d, /\-/, $._ureal_d, /i/),
+        seq($._real_d, /\+/, $._ureal_d),
+        seq($._real_d, /@/, $._real_d),
+        seq($._real_d, /\+i/ ),
+        seq($._real_d, /\-i/ ),
+        /\+i/,
+        /\-i/,
+        $._real_d,
+      ),
+
+      _real_d: $ => seq(/[+\-]?/, $._ureal_d),
+      _ureal_d: $ => /\.[0-9]+#*([esfdl]{1}[+\-]?[0-9]+)?|[0-9]+#*\/[0-9]+#*|[0-9]+#+\.#*([esfdl]{1}[+\-]?[0-9]+)?|[0-9]+\.[0-9]*#*([esfdl]{1}[+\-]?[0-9]+)?|[0-9]+#*([esfdl]{1}[+\-]?[0-9]+)?|[0-9]+#*/,
+
+      hexadecimal_number: $ => seq(
+        choice(
+          /(#x|#X)(#e|#E|#i|#I)?/,
+          /(#e|#E|#i|#I)?(#x|#X)/,
+        ),
+        choice(
+          seq($._real_x, /@/, $._real_x),
+          seq($._real_x, /\+/, $._ureal_x),
+          seq($._real_x, /\-/, $._ureal_x, /i/),
+          seq($._real_x, /\+i/ ),
+          seq($._real_x, /\-i/ ),
+          seq(/\+/, $._ureal_x, /i/),
+          seq(/\-/, $._ureal_x, /i/),
+          /\+i/,
+          /\-i/,
+          $._real_x,
+        ),
+      ),
+      _real_x: $ => seq(optional( /[+\-]?/ ), $._ureal_x),
+      _ureal_x: $ => /([0-9a-f]+#*|[0-9a-f]+#*\/[0-9a-f]+#*)/,
+
+    }
+});
+
+    // TO BE DONE:
+
+    //<delimiter> --> <whitespace> | ( | ) | " | ;
+    //<whitespace> --> <space or newline>
+    //<comment> --> ;  <all subsequent characters up to a
+    //                 line break>
+    //<atmosphere> --> <whitespace> | <comment>
+    //<intertoken space> --> <atmosphere>*
+    //
+    //In <quasiquotation>s, a <list qq template D> can sometimes be confused with either an <unquotation D> or a <splicing unquotation D>. The interpretation as an <unquotation> or <splicing unquotation D> takes precedence.
+    //
+    //7.1.5 Transformers
+    //
