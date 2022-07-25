@@ -9,7 +9,6 @@ module.exports = grammar ({
   ],
 
   conflicts: $ => [
-    [$.decimal_number],
   ],
 
   supertypes: $ => [
@@ -175,59 +174,87 @@ module.exports = grammar ({
     binary_number: $ => seq(
       /(#(b|B)(#(e|E|i|I))?|(#(e|E|i|I))?#(b|B))/,
       choice(
-        $._real_b,
+        seq($._real_b, optional( choice( "i", "+i", "-i"))),
         seq($._real_b, /@/, $._real_b),
-        seq($._real_b, $._real_b),
-        seq($._real_b, $._real_b, /i/),
-        seq($._real_b, /i|\+i|\-i/ ),
+        seq($._real_b, $._real_b, optional( "i" )),
         /\+i/,
         /\-i/
       ),
     ),
 
-    _real_b: $ => token(/[+\-]?([0-1]+#*|[0-1]+#*\/[0-1]+#*)/),
+    _real_b: $ =>
+    token(
+      seq(
+        choice( "+", "-", ""),
+        /[+\-]?([0-1]+#*|[0-1]+#*\/[0-1]+#*)/
+      ),
+    ),
 
     octal_number: $ => seq(
       choice(
         /(#o|#O)(#e|#E|#i|#I)?/,
         /(#e|#E|#i|#I)?(#o|#O)/),
       choice(
-        $._real_o,
-        seq($._real_o, /@/, $._real_o),
-        seq($._real_o, $._real_o),
-        seq($._real_o, $._real_o, /i/),
-        seq($._real_o, /i|\+i|\-i/ ),
+        seq($._real_o, token.immediate( optional( choice( "i", "+i", "-i")))),
+        seq($._real_o, token.immediate("@"), $._real_o),
+        seq($._real_o, $._real_o, token.immediate(optional( "i" ))),
         /\+i/,
         /\-i/
       ),
     ),
 
-    _real_o: $ => token(/[+\-]?([0-7]+#*|[0-7]+#*\/[0-7]+#*)/),
+    _real_o: $ =>
+    token(
+      seq(
+        choice( "+", "-", ""),
+        /[0-7]+#*|[0-7]+#*\/[0-7]+#*/,
+      ),
+    ),
 
     decimal_number: $ =>
     choice(
-      /[+\-]?[0-9]+/,
+      $._decimal_number,
+      seq( /(#(d|D))(#(e|E|i|I))?/, $._decimal_number),
+      seq( /(#(e|E|i|I))?(#(d|D))/, $._decimal_number),
+    ),
+
+    _decimal_number: $ =>
+    prec.right(
+      choice(
+        seq($._real_d, token.immediate( optional( choice( "i", "+i", "-i")))),
+        seq($._real_d, $._real_d_immediate, token.immediate(optional("i"))),
+        seq($._real_d, token.immediate("@"), $._real_d_immediate),
+        /\+i|\-i/ ,
+      ),
+    ),
+
+    _real_d_immediate: $ =>
+    token.immediate(
       seq(
-        optional(
-          choice(
-            /(#(d|D))(#(e|E|i|I))?/,
-            /(#(e|E|i|I))?(#(d|D))/,
-          ),
-        ),
+        choice( "+", "-", ""),
         choice(
-          $._real_d,
-          seq($._real_d, /@/, $._real_d),
-          seq($._real_d, $._real_d),
-          seq($._real_d, $._real_d, /i/),
-          seq($._real_d, /i|\+i|\-i/ ),
-          /\+i|\-i/,
+          /[0-9]+#*\/[0-9]+#*/,
+          /[0-9]+#+\.#*([esfdl]{1}[+\-]?[0-9]+)?/,
+          /[0-9]+\.[0-9]*#*([esfdl]{1}[+\-]?[0-9]+)?/,
+          /[0-9]+#*([esfdl]{1}[+\-]?[0-9]+)?/,
+          /\.[0-9]+#*([esfdl]{1}[+\-]?[0-9]+)?/,
         ),
       ),
     ),
 
-    //_real_d: $ => token(/[+\-]?(\.[0-9]+#*([esfdl]{1}[+\-]?[0-9]+)?|[0-9]+#*\/[0-9]+#*|[0-9]+#+\.#*([esfdl]{1}[+\-]?[0-9]+)?|[0-9]+\.[0-9]*#*([esfdl]{1}[+\-]?[0-9]+)?|[0-9]+#*([esfdl]{1}[+\-]?[0-9]+)?|[0-9]+#*)/),
-    // this one is following the order of the grammar:
-    _real_d: $ => token(/[+\-]?([0-9]+#*([esfdl]{1}[+\-]?[0-9]+)?|\.[0-9]+#*([esfdl]{1}[+\-]?[0-9]+)?|[0-9]+\.[0-9]*#*([esfdl]{1}[+\-]?[0-9]+)?|[0-9]+#+\.#*([esfdl]{1}[+\-]?[0-9]+)?|[0-9]+#*\/[0-9]+#*|[0-9]+#*)/),
+    _real_d: $ =>
+    token(
+      seq(
+        choice( "+", "-", ""),
+        choice(
+          /[0-9]+#*\/[0-9]+#*/,
+          /[0-9]+#+\.#*([esfdl]{1}[+\-]?[0-9]+)?/,
+          /[0-9]+\.[0-9]*#*([esfdl]{1}[+\-]?[0-9]+)?/,
+          /[0-9]+#*([esfdl]{1}[+\-]?[0-9]+)?/,
+          /\.[0-9]+#*([esfdl]{1}[+\-]?[0-9]+)?/,
+        ),
+      ),
+    ),
 
     hexadecimal_number: $ => seq(
       choice(
@@ -235,17 +262,21 @@ module.exports = grammar ({
         /(#e|#E|#i|#I)?(#x|#X)/,
       ),
       choice(
-        seq($._real_x, /@/, $._real_x),
-        seq($._real_x, $._real_x),
-        seq($._real_x, $._real_x, /i/),
-        seq($._real_x, /i|\+i|\-i/ ),
+        seq($._real_x, optional( choice( "i", "+i", "-i"))),
+        seq($._real_x, token.immediate("@"), $._real_x),
+        seq($._real_x, $._real_x, optional( "i" )),
         /\+i/,
         /\-i/,
-        $._real_x,
       ),
     ),
-    _real_x: $ => token(/[+\-]?([0-9a-f]+#*|[0-9a-f]+#*\/[0-9a-f]+#*)/),
-//}}}
+    _real_x: $ =>
+    token(
+      seq(
+        choice( "+", "-", ""),
+        /[0-9a-f]+#*|[0-9a-f]+#*\/[0-9a-f]+#*/
+      ),
+    ),
+    //}}}
   }
 });
 
