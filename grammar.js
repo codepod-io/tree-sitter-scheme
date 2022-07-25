@@ -55,8 +55,53 @@ module.exports = grammar ({
 
     definition: $ =>
     choice(
+      $.binding_syntax,
       $.binding_procedure,
       $.binding_variable,
+    ),
+
+    binding_syntax: $ =>
+    paren(
+      seq(
+        "define-syntax",
+        field("name", $.identifier),
+        $.transformer,
+      ),
+    ),
+    transformer: $ =>
+    paren(
+      seq(
+        "syntax-rules",
+        $.reserved,
+        repeat1($.syntax_rule),
+      ),
+    ),
+
+    syntax_rule: $ => paren( seq( $.pattern, $.template),),
+    reserved: $ => paren( repeat($.identifier) ),
+
+    pattern: $ => $._pattern,
+
+    _pattern: $ =>
+    prec.right(
+      choice(
+        alias( /[^(\.\.\.)\S]+/, $.identifier),
+        paren( optional( repeat1($._pattern))),
+        paren( seq( repeat1($._pattern), ".", $._pattern)),
+        paren( seq( repeat($._pattern), $._pattern, "..." )),
+        seq("#", paren( repeat($._pattern))),
+        seq("#", paren( repeat($._pattern), $._pattern, "..." )),
+        $.string, $.character, $.boolean, $.number
+      ),
+    ),
+
+    template: $ => $._template,
+    _template: $ =>
+    prec.right(
+      choice(
+        alias( /[^(\.\.\.)\S]+/, $.identifier),
+        repeat1($._token),
+      ),
     ),
 
     binding_procedure: $ =>
