@@ -15,6 +15,9 @@ numbers
 +215i
 #xff##/9a###
 +4711+900i
+#I#o+nan.0i
+#b#E-inf.0i
++inf.0
 
 ---
 
@@ -31,6 +34,9 @@ numbers
   (binary_number)
   (decimal_number)
   (hexadecimal_number)
-  (decimal_number))
+  (decimal_number)
+  (octal_number)
+  (binary_number)
+  (infnan))
 
 
