@@ -11,7 +11,14 @@ module.exports = grammar ({
   conflicts: $ => [
   ],
 
+  extras: $ => [
+    $.comment,
+    /\s/,
+  ],
+
   supertypes: $ => [
+    $.derived_expr,
+    $.conditional,
     $.number,
     $.definition,
     $.expression,
@@ -21,9 +28,11 @@ module.exports = grammar ({
   rules: {
     program: $ => repeat($._scope),
 
+    comment: $ => token(/;[^\n]*/),
+
     _scope: $ =>
     choice(
-      $._token,
+      prec( -1, $._token, ),
       $.definition,
     ),
 
@@ -34,10 +43,10 @@ module.exports = grammar ({
     ),
 
     primitives: $ => choice(
-      $.variable,
-      //$.quoted_datum,
-      $.boolean,
+      $.identifier,
+      $.quote,
       $.symbol,
+      $.boolean,
       $.number,
       $.character,
       $.string,
@@ -46,9 +55,9 @@ module.exports = grammar ({
     expression: $ => choice(
       $.lambda,
       $.procedure_call,
-      //$.conditional,
-      //$.assignment,
-      //$.derived_expr,
+      $.conditional,
+      $.assignment,
+      $.derived_expr,
       //$.macro_use,
       //$.macro_block
     ),
@@ -58,6 +67,227 @@ module.exports = grammar ({
       $.binding_syntax,
       $.binding_procedure,
       $.binding_variable,
+      $.binding_begin,
+    ),
+
+    quote: $ => seq("'", $._datum),
+    _datum: $ => choice(
+      $.list,
+      $.vector,
+    ),
+    symbol: $ => token(/'[\w\d!$%&*/:<=>?^_~+\-@\.]+/), //'
+
+    _either: $ =>
+    choice(
+      $._datum,
+      $.boolean,
+      $.number,
+      $.character,
+      $.string,
+      alias($._identifier, "symbol"),
+    ),
+
+    list: $ =>
+    choice(
+      paren( repeat($._either) ),
+      paren( repeat1($._either), ".:", $._either, ),
+      seq(
+        choice("'", "`", ",", ",@"),
+        $._datum,
+      ),
+    ),
+
+    vector: $ => seq("#", paren( repeat($._datum) )),
+
+    conditional: $ =>
+    choice(
+      $.if_conditional,
+      $.when_conditional,
+    ),
+
+    if_conditional: $ =>
+      paren(
+      seq(
+        "if",
+        field("test", $._token),
+        field("consequence", $._token),
+        optional(field("alternative", $._token)),
+        ),
+      ),
+
+    when_conditional: $ =>
+      paren(
+      seq(
+        "when",
+        field("test", $._token),
+        field("body", $.body),
+        ),
+      ),
+
+
+    procedure_call: $ => paren( seq( $._token, repeat($._token), ) ),
+
+    assignment: $ =>
+    paren(
+      seq(
+        "set!",
+        field("binding", $.identifier),
+        field("value", $._token)
+      ),
+    ),
+
+    derived_expr: $ => choice(
+      $.cond_conditional,
+      $.case_conditional,
+      $.and_conditional,
+      $.or_conditional,
+      $.binding_let,
+      $.begin,
+      $.do_loop,
+      $.delay,
+      $.quasiquotation
+    ),
+
+    quasiquotation: $ =>
+    choice(
+      seq("`", $._qq),
+      paren( seq( "quasiquote", $._qq),),
+    ),
+
+    _qq: $ =>
+    choice(
+      // TODO: bytevector
+      $.boolean, $.number, $.character, $.string, alias($.identifier, $.symbol),
+      paren( repeat($._qq_or_splice) ),
+      paren( seq(repeat1($._qq_or_splice), ".", $._qq )),
+      seq("'", $._qq),
+      $.quasiquotation,
+      seq("#", paren(repeat($._qq_or_splice))),
+      $.unquotation,
+    ),
+
+    unquotation: $ =>
+    choice(
+      seq(",", $._token),
+      paren(seq("unquote", $._token, )),
+    ),
+
+    _qq_or_splice: $ => choice(
+      $._qq,
+      $.splice,
+    ),
+
+    splice: $ =>
+    choice(
+      seq(",@", $._qq),
+      paren( seq("unquote-splicing", $._qq)),
+    ),
+
+    delay: $ =>
+    paren(
+      seq(
+        "delay", $.expression
+      ),
+    ),
+
+    do_loop: $ =>
+    paren(
+      seq("do",
+        paren(optional( repeat1($.iteration_step)) ),
+        paren(
+          seq(
+            field("test", $._token),
+            optional( field("result", $._sequence)),
+          ),
+        ),
+        optional( $.body ),
+      ),
+    ),
+
+    begin: $ => paren( seq("begin", $._sequence)),
+
+    binding_let: $ =>
+    paren(
+      choice(
+        seq("let", paren( repeat($.binding)), alias( $._scope, $.body)),
+        seq("let", field("label", $.identifier), paren( repeat($.binding)), alias( $._scope, $.body)),
+        seq("let*", paren( repeat($.binding)), alias( $._scope, $.body)),
+        seq("letrec", paren( repeat($.binding)), alias( $._scope, $.body)),
+      ),
+    ),
+
+    binding: $ => paren( seq( $.identifier, $._token )),
+
+    iteration_step: $ =>
+    paren(
+      seq(
+      field("var", $.identifier),
+      field("init", $._token),
+      optional(field("step", $._token)),
+      ),
+    ),
+
+    and_conditional: $ => paren( seq("and", repeat($._token))),
+    or_conditional: $ => paren( seq("or", repeat($._token))),
+
+    case_conditional: $ =>
+      paren(
+        choice(
+          seq("case", field("on", $._token), repeat1($.case_clause),),
+          seq("case", field("on", $._token), repeat($.case_clause), alias( $._case_else_clause, $.else_clause)),
+        ),
+      ),
+
+    cond_conditional: $ => choice(
+      paren( seq("cond", repeat1($.cond_clause))),
+      paren( seq("cond", repeat($.cond_clause), $.else_clause )),
+    ),
+    case_clause: $ =>
+    paren(
+      choice(
+        seq(
+          field("test", paren( repeat($._either) )),
+          field("consequence", alias( $._sequence, $.body)),
+        ),
+        seq(
+          field("test", paren( repeat($._either) )),
+          "=>", field("consequence", $._token)
+        ),
+      ),
+    ),
+    _case_else_clause: $ =>
+    choice(
+      paren( seq( "else", "=>", $._sequence, )),
+      $._else_clause
+    ),
+
+    else_clause: $ => $._else_clause,
+    _else_clause: $ => paren( seq( "else", alias( $._sequence, $.body) )),
+    cond_clause: $ => choice(
+      paren( seq( field("test", $._token), optional( field("consequence", alias( $._sequence, $.body))))),
+      paren( seq( field("test", $._token), "=>", field("consequence", $._token,))),
+    ),
+
+    _case_clause: $ => paren( paren( seq( repeat($._token), $._sequence ))),
+
+    bindings: $ => paren( seq($.identifier, $.expression, )),
+
+    _body: $ => seq(repeat($._scope), $._sequence),
+    _sequence: $ => seq(repeat($._token), $._token),
+
+    ///////////////
+    // BINDINGS //{{{
+    /////////////
+
+    /////////////
+    // SYNTAX //{{{
+    ///////////
+
+    binding_begin: $ =>
+    paren(
+      seq(
+        "begin", repeat1($._scope),
+      ),
     ),
 
     binding_syntax: $ =>
@@ -102,7 +332,7 @@ module.exports = grammar ({
         alias( /[^(\.\.\.)\S]+/, $.identifier),
         repeat1($._token),
       ),
-    ),
+    ),//}}}
 
     binding_procedure: $ =>
     paren(
@@ -139,22 +369,21 @@ module.exports = grammar ({
       seq(
         "define",
         field("name", $.identifier),
-        field(
-          "value",
+        field("value",
           choice(
             $.primitives,
             $.procedure_call,
+            $.conditional,
+            $.assignment,
+            $.derived_expr,
           ),
         ),
       ),
-    ),
+    ),//}}}
 
     identifier: $ => $._identifier,
     vararg_identifier: $ => $._identifier,
-    variable: $ => $._identifier,
     _identifier: $ => token(/[A-Za-z!$%&*/:<=>?^_~]{1}[A-Za-z0-9!$%&*/:<=>?^_~+\-@\.]*|\.\.\./),
-
-    symbol: $ => seq("'", $._identifier),
 
     // these are the arguments for a lambda.
     arguments: $ =>
@@ -195,7 +424,7 @@ module.exports = grammar ({
       ),
     ),
 
-    boolean: $ => token(choice("#f", "#t")),
+    boolean: $ => token(choice("#f", "#t", "#false", "#true")),
     character: $ => token(choice(
       /#\\[\S]/,
       /#\\space/,
@@ -203,7 +432,7 @@ module.exports = grammar ({
     )),
     // TODO:  function, which prevents quote and backslash, but escapes them.
     // FIXME: should use character names.
-    string: $ => seq("\"", $.character ,"\""),
+    string: $ => token( /".*"/ ),
 
     //////////////
     // NUMBERS //{{{
@@ -298,15 +527,13 @@ module.exports = grammar ({
     ),
 
     _decimal_number: $ =>
-    prec.right(
-      choice(
-        seq($._real_d, token.immediate( optional( choice( "i", "+i", "-i")))),
-        seq($._real_d, $._real_d_immediate, token.immediate(optional("i"))),
-        seq($._real_d, token.immediate("@"), $._real_d_immediate),
-        seq($._real_d, $._infnan_immediate, token.immediate("i")),
-        seq($._infnan_immediate, token.immediate("i")),
-        /\+i|\-i/ ,
-      ),
+    choice(
+      seq($._real_d, token.immediate( optional( choice( "i", "+i", "-i")))),
+      seq($._real_d, token.immediate(prec(1, "@")), $._real_d_immediate),
+      seq($._real_d, $._real_d_immediate, token.immediate(optional("i"))),
+      seq($._real_d, $._infnan_immediate, token.immediate("i")),
+      seq($._infnan_immediate, token.immediate("i")),
+      /\+i|\-i/ ,
     ),
 
     _real_d_immediate: $ =>

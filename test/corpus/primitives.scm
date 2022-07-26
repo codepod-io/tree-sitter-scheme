@@ -39,4 +39,17 @@ numbers
   (binary_number)
   (infnan))
 
+===
+quoted_datum
+===
 
+'symbol
+'3
+'(everything is quoted)
+
+---
+
+(program
+  (symbol)
+  (symbol)
+  (quote (list)))
