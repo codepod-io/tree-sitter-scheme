@@ -4,7 +4,27 @@
     "named": true,
     "subtypes": [
       {
+        "type": "and_conditional",
+        "named": true
+      },
+      {
+        "type": "case_conditional",
+        "named": true
+      },
+      {
+        "type": "cond_conditional",
+        "named": true
+      },
+      {
         "type": "if_conditional",
+        "named": true
+      },
+      {
+        "type": "or_conditional",
+        "named": true
+      },
+      {
+        "type": "unless_conditional",
         "named": true
       },
       {
@@ -26,7 +46,15 @@
         "named": true
       },
       {
+        "type": "binding_record",
+        "named": true
+      },
+      {
         "type": "binding_syntax",
+        "named": true
+      },
+      {
+        "type": "binding_values",
         "named": true
       },
       {
@@ -40,10 +68,6 @@
     "named": true,
     "subtypes": [
       {
-        "type": "and_conditional",
-        "named": true
-      },
-      {
         "type": "begin",
         "named": true
       },
@@ -52,11 +76,7 @@
         "named": true
       },
       {
-        "type": "case_conditional",
-        "named": true
-      },
-      {
-        "type": "cond_conditional",
+        "type": "case_lambda",
         "named": true
       },
       {
@@ -68,7 +88,11 @@
         "named": true
       },
       {
-        "type": "or_conditional",
+        "type": "guard",
+        "named": true
+      },
+      {
+        "type": "parameterize",
         "named": true
       },
       {
@@ -86,6 +110,10 @@
         "named": true
       },
       {
+        "type": "binding_let_syntax",
+        "named": true
+      },
+      {
         "type": "conditional",
         "named": true
       },
@@ -94,7 +122,15 @@
         "named": true
       },
       {
+        "type": "includer",
+        "named": true
+      },
+      {
         "type": "lambda",
+        "named": true
+      },
+      {
+        "type": "load_procedure",
         "named": true
       },
       {
@@ -138,6 +174,10 @@
         "named": true
       },
       {
+        "type": "byte_vector",
+        "named": true
+      },
+      {
         "type": "character",
         "named": true
       },
@@ -172,7 +212,15 @@
       "required": false,
       "types": [
         {
+          "type": "comment",
+          "named": true
+        },
+        {
           "type": "expression",
+          "named": true
+        },
+        {
+          "type": "label",
           "named": true
         },
         {
@@ -191,7 +239,15 @@
       "required": false,
       "types": [
         {
+          "type": "comment",
+          "named": true
+        },
+        {
           "type": "expression",
+          "named": true
+        },
+        {
+          "type": "label",
           "named": true
         },
         {
@@ -224,7 +280,15 @@
         "required": true,
         "types": [
           {
+            "type": "comment",
+            "named": true
+          },
+          {
             "type": "expression",
+            "named": true
+          },
+          {
+            "type": "label",
             "named": true
           },
           {
@@ -244,7 +308,15 @@
       "required": true,
       "types": [
         {
+          "type": "comment",
+          "named": true
+        },
+        {
           "type": "expression",
+          "named": true
+        },
+        {
+          "type": "label",
           "named": true
         },
         {
@@ -262,13 +334,66 @@
   {
     "type": "binding",
     "named": true,
-    "fields": {},
+    "fields": {
+      "name": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "comment",
+            "named": true
+          },
+          {
+            "type": "expression",
+            "named": true
+          },
+          {
+            "type": "label",
+            "named": true
+          },
+          {
+            "type": "primitives",
+            "named": true
+          }
+        ]
+      },
+      "value": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "comment",
+            "named": true
+          },
+          {
+            "type": "expression",
+            "named": true
+          },
+          {
+            "type": "label",
+            "named": true
+          },
+          {
+            "type": "primitives",
+            "named": true
+          }
+        ]
+      }
+    },
     "children": {
       "multiple": true,
-      "required": true,
+      "required": false,
       "types": [
         {
+          "type": "comment",
+          "named": true
+        },
+        {
           "type": "expression",
+          "named": true
+        },
+        {
+          "type": "label",
           "named": true
         },
         {
@@ -287,11 +412,19 @@
       "required": true,
       "types": [
         {
+          "type": "comment",
+          "named": true
+        },
+        {
           "type": "definition",
           "named": true
         },
         {
           "type": "expression",
+          "named": true
+        },
+        {
+          "type": "label",
           "named": true
         },
         {
@@ -318,7 +451,7 @@
     },
     "children": {
       "multiple": true,
-      "required": true,
+      "required": false,
       "types": [
         {
           "type": "binding",
@@ -326,6 +459,29 @@
         },
         {
           "type": "body",
+          "named": true
+        },
+        {
+          "type": "multi_bindings",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "binding_let_syntax",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "body",
+          "named": true
+        },
+        {
+          "type": "syntax_binding",
           "named": true
         }
       ]
@@ -348,7 +504,7 @@
     },
     "children": {
       "multiple": true,
-      "required": true,
+      "required": false,
       "types": [
         {
           "type": "arguments",
@@ -360,6 +516,46 @@
         },
         {
           "type": "lambda",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "binding_record",
+    "named": true,
+    "fields": {
+      "predicate": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
+      "type": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "constructor",
+          "named": true
+        },
+        {
+          "type": "field",
           "named": true
         }
       ]
@@ -386,6 +582,48 @@
       "types": [
         {
           "type": "transformer",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "binding_values",
+    "named": true,
+    "fields": {
+      "init": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "comment",
+            "named": true
+          },
+          {
+            "type": "definition",
+            "named": true
+          },
+          {
+            "type": "expression",
+            "named": true
+          },
+          {
+            "type": "label",
+            "named": true
+          },
+          {
+            "type": "primitives",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "bindings",
           "named": true
         }
       ]
@@ -434,6 +672,21 @@
     }
   },
   {
+    "type": "bindings",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "identifier",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "body",
     "named": true,
     "fields": {},
@@ -441,6 +694,10 @@
       "multiple": true,
       "required": true,
       "types": [
+        {
+          "type": "comment",
+          "named": true
+        },
         {
           "type": "definition",
           "named": true
@@ -450,7 +707,26 @@
           "named": true
         },
         {
+          "type": "label",
+          "named": true
+        },
+        {
           "type": "primitives",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "byte_vector",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "decimal_number",
           "named": true
         }
       ]
@@ -469,7 +745,15 @@
             "named": true
           },
           {
+            "type": "comment",
+            "named": true
+          },
+          {
             "type": "expression",
+            "named": true
+          },
+          {
+            "type": "label",
             "named": true
           },
           {
@@ -491,7 +775,19 @@
             "named": false
           },
           {
+            "type": "[",
+            "named": false
+          },
+          {
+            "type": "]",
+            "named": false
+          },
+          {
             "type": "boolean",
+            "named": true
+          },
+          {
+            "type": "byte_vector",
             "named": true
           },
           {
@@ -531,7 +827,15 @@
         "required": true,
         "types": [
           {
+            "type": "comment",
+            "named": true
+          },
+          {
             "type": "expression",
+            "named": true
+          },
+          {
+            "type": "label",
             "named": true
           },
           {
@@ -557,6 +861,94 @@
     }
   },
   {
+    "type": "case_lambda",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "clause",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "clause",
+    "named": true,
+    "fields": {
+      "formal": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "(",
+            "named": false
+          },
+          {
+            "type": ")",
+            "named": false
+          },
+          {
+            "type": ".",
+            "named": false
+          },
+          {
+            "type": "[",
+            "named": false
+          },
+          {
+            "type": "]",
+            "named": false
+          },
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "body",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "comment",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "comment",
+          "named": true
+        },
+        {
+          "type": "expression",
+          "named": true
+        },
+        {
+          "type": "label",
+          "named": true
+        },
+        {
+          "type": "primitives",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "cond_clause",
     "named": true,
     "fields": {
@@ -569,7 +961,15 @@
             "named": true
           },
           {
+            "type": "comment",
+            "named": true
+          },
+          {
             "type": "expression",
+            "named": true
+          },
+          {
+            "type": "label",
             "named": true
           },
           {
@@ -583,7 +983,15 @@
         "required": true,
         "types": [
           {
+            "type": "comment",
+            "named": true
+          },
+          {
             "type": "expression",
+            "named": true
+          },
+          {
+            "type": "label",
             "named": true
           },
           {
@@ -614,6 +1022,51 @@
     }
   },
   {
+    "type": "cond_expand_clause",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "feature_requirement",
+          "named": true
+        },
+        {
+          "type": "library_declaration",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "constructor",
+    "named": true,
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "identifier",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "decimal_number",
     "named": true,
     "fields": {}
@@ -627,7 +1080,19 @@
       "required": true,
       "types": [
         {
+          "type": "comment",
+          "named": true
+        },
+        {
           "type": "expression",
+          "named": true
+        },
+        {
+          "type": "label",
+          "named": true
+        },
+        {
+          "type": "primitives",
           "named": true
         }
       ]
@@ -642,7 +1107,15 @@
         "required": false,
         "types": [
           {
+            "type": "comment",
+            "named": true
+          },
+          {
             "type": "expression",
+            "named": true
+          },
+          {
+            "type": "label",
             "named": true
           },
           {
@@ -656,7 +1129,15 @@
         "required": true,
         "types": [
           {
+            "type": "comment",
+            "named": true
+          },
+          {
             "type": "expression",
+            "named": true
+          },
+          {
+            "type": "label",
             "named": true
           },
           {
@@ -694,11 +1175,182 @@
           "named": true
         },
         {
+          "type": "comment",
+          "named": true
+        },
+        {
           "type": "expression",
           "named": true
         },
         {
+          "type": "label",
+          "named": true
+        },
+        {
           "type": "primitives",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "export",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "identifier",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "feature_requirement",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "feature_requirement",
+          "named": true
+        },
+        {
+          "type": "identifier",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "field",
+    "named": true,
+    "fields": {
+      "accessor": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
+      "mutator": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "guard",
+    "named": true,
+    "fields": {
+      "consequence": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "body",
+            "named": true
+          },
+          {
+            "type": "comment",
+            "named": true
+          },
+          {
+            "type": "expression",
+            "named": true
+          },
+          {
+            "type": "label",
+            "named": true
+          },
+          {
+            "type": "primitives",
+            "named": true
+          }
+        ]
+      },
+      "test": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "comment",
+            "named": true
+          },
+          {
+            "type": "expression",
+            "named": true
+          },
+          {
+            "type": "label",
+            "named": true
+          },
+          {
+            "type": "primitives",
+            "named": true
+          }
+        ]
+      },
+      "value": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "body",
+          "named": true
+        },
+        {
+          "type": "guards",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "guards",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "guard",
           "named": true
         }
       ]
@@ -723,7 +1375,15 @@
         "required": false,
         "types": [
           {
+            "type": "comment",
+            "named": true
+          },
+          {
             "type": "expression",
+            "named": true
+          },
+          {
+            "type": "label",
             "named": true
           },
           {
@@ -737,7 +1397,15 @@
         "required": true,
         "types": [
           {
+            "type": "comment",
+            "named": true
+          },
+          {
             "type": "expression",
+            "named": true
+          },
+          {
+            "type": "label",
             "named": true
           },
           {
@@ -751,7 +1419,15 @@
         "required": true,
         "types": [
           {
+            "type": "comment",
+            "named": true
+          },
+          {
             "type": "expression",
+            "named": true
+          },
+          {
+            "type": "label",
             "named": true
           },
           {
@@ -763,6 +1439,62 @@
     }
   },
   {
+    "type": "import_declaration",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "import_set",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "import_set",
+    "named": true,
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "import_set",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "identifier",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "includer",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "string",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "iteration_step",
     "named": true,
     "fields": {
@@ -771,7 +1503,15 @@
         "required": true,
         "types": [
           {
+            "type": "comment",
+            "named": true
+          },
+          {
             "type": "expression",
+            "named": true
+          },
+          {
+            "type": "label",
             "named": true
           },
           {
@@ -785,7 +1525,15 @@
         "required": false,
         "types": [
           {
+            "type": "comment",
+            "named": true
+          },
+          {
             "type": "expression",
+            "named": true
+          },
+          {
+            "type": "label",
             "named": true
           },
           {
@@ -804,6 +1552,33 @@
           }
         ]
       }
+    }
+  },
+  {
+    "type": "label",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "comment",
+          "named": true
+        },
+        {
+          "type": "expression",
+          "named": true
+        },
+        {
+          "type": "label",
+          "named": true
+        },
+        {
+          "type": "primitives",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -826,6 +1601,71 @@
     }
   },
   {
+    "type": "library",
+    "named": true,
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "library_declaration",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "library_declaration",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "binding_begin",
+          "named": true
+        },
+        {
+          "type": "cond_expand_clause",
+          "named": true
+        },
+        {
+          "type": "export",
+          "named": true
+        },
+        {
+          "type": "import_declaration",
+          "named": true
+        },
+        {
+          "type": "includer",
+          "named": true
+        },
+        {
+          "type": "library_declaration",
+          "named": true
+        },
+        {
+          "type": "string",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "list",
     "named": true,
     "fields": {},
@@ -835,6 +1675,10 @@
       "types": [
         {
           "type": "boolean",
+          "named": true
+        },
+        {
+          "type": "byte_vector",
           "named": true
         },
         {
@@ -861,6 +1705,114 @@
     }
   },
   {
+    "type": "load_procedure",
+    "named": true,
+    "fields": {
+      "environment": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "comment",
+            "named": true
+          },
+          {
+            "type": "expression",
+            "named": true
+          },
+          {
+            "type": "label",
+            "named": true
+          },
+          {
+            "type": "primitives",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "comment",
+          "named": true
+        },
+        {
+          "type": "expression",
+          "named": true
+        },
+        {
+          "type": "label",
+          "named": true
+        },
+        {
+          "type": "primitives",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "multi_bindings",
+    "named": true,
+    "fields": {
+      "formal": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "(",
+            "named": false
+          },
+          {
+            "type": ")",
+            "named": false
+          },
+          {
+            "type": ".",
+            "named": false
+          },
+          {
+            "type": "[",
+            "named": false
+          },
+          {
+            "type": "]",
+            "named": false
+          },
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "comment",
+            "named": true
+          },
+          {
+            "type": "expression",
+            "named": true
+          },
+          {
+            "type": "label",
+            "named": true
+          },
+          {
+            "type": "primitives",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "octal_number",
     "named": true,
     "fields": {}
@@ -874,11 +1826,38 @@
       "required": false,
       "types": [
         {
+          "type": "comment",
+          "named": true
+        },
+        {
           "type": "expression",
           "named": true
         },
         {
+          "type": "label",
+          "named": true
+        },
+        {
           "type": "primitives",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "parameterize",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "binding",
+          "named": true
+        },
+        {
+          "type": "body",
           "named": true
         }
       ]
@@ -924,7 +1903,19 @@
         "required": true,
         "types": [
           {
-            "type": "identifier",
+            "type": "comment",
+            "named": true
+          },
+          {
+            "type": "expression",
+            "named": true
+          },
+          {
+            "type": "label",
+            "named": true
+          },
+          {
+            "type": "primitives",
             "named": true
           }
         ]
@@ -947,14 +1938,30 @@
     "fields": {},
     "children": {
       "multiple": true,
-      "required": false,
+      "required": true,
       "types": [
+        {
+          "type": "comment",
+          "named": true
+        },
         {
           "type": "definition",
           "named": true
         },
         {
           "type": "expression",
+          "named": true
+        },
+        {
+          "type": "import_declaration",
+          "named": true
+        },
+        {
+          "type": "label",
+          "named": true
+        },
+        {
+          "type": "library",
           "named": true
         },
         {
@@ -974,6 +1981,10 @@
       "types": [
         {
           "type": "boolean",
+          "named": true
+        },
+        {
+          "type": "byte_vector",
           "named": true
         },
         {
@@ -1054,6 +2065,10 @@
           "named": true
         },
         {
+          "type": "byte_vector",
+          "named": true
+        },
+        {
           "type": "character",
           "named": true
         },
@@ -1090,6 +2105,32 @@
     "fields": {}
   },
   {
+    "type": "syntax_binding",
+    "named": true,
+    "fields": {
+      "keyword": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "transformer",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "syntax_rule",
     "named": true,
     "fields": {},
@@ -1117,7 +2158,15 @@
       "required": true,
       "types": [
         {
+          "type": "comment",
+          "named": true
+        },
+        {
           "type": "expression",
+          "named": true
+        },
+        {
+          "type": "label",
           "named": true
         },
         {
@@ -1147,6 +2196,44 @@
     }
   },
   {
+    "type": "unless_conditional",
+    "named": true,
+    "fields": {
+      "body": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "body",
+            "named": true
+          }
+        ]
+      },
+      "test": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "comment",
+            "named": true
+          },
+          {
+            "type": "expression",
+            "named": true
+          },
+          {
+            "type": "label",
+            "named": true
+          },
+          {
+            "type": "primitives",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "unquotation",
     "named": true,
     "fields": {},
@@ -1155,7 +2242,15 @@
       "required": true,
       "types": [
         {
+          "type": "comment",
+          "named": true
+        },
+        {
           "type": "expression",
+          "named": true
+        },
+        {
+          "type": "label",
           "named": true
         },
         {
@@ -1208,7 +2303,15 @@
         "required": true,
         "types": [
           {
+            "type": "comment",
+            "named": true
+          },
+          {
             "type": "expression",
+            "named": true
+          },
+          {
+            "type": "label",
             "named": true
           },
           {
@@ -1221,6 +2324,14 @@
   },
   {
     "type": "#",
+    "named": false
+  },
+  {
+    "type": "#;",
+    "named": false
+  },
+  {
+    "type": "#u8",
     "named": false
   },
   {
@@ -1260,11 +2371,23 @@
     "named": false
   },
   {
+    "type": "=",
+    "named": false
+  },
+  {
     "type": "=>",
     "named": false
   },
   {
     "type": "@",
+    "named": false
+  },
+  {
+    "type": "[",
+    "named": false
+  },
+  {
+    "type": "]",
     "named": false
   },
   {
@@ -1288,11 +2411,11 @@
     "named": false
   },
   {
-    "type": "character",
-    "named": true
+    "type": "case-lambda",
+    "named": false
   },
   {
-    "type": "comment",
+    "type": "character",
     "named": true
   },
   {
@@ -1300,7 +2423,19 @@
     "named": false
   },
   {
+    "type": "cond-expand",
+    "named": false
+  },
+  {
     "type": "define",
+    "named": false
+  },
+  {
+    "type": "define-library",
+    "named": false
+  },
+  {
+    "type": "define-record-type",
     "named": false
   },
   {
@@ -1308,7 +2443,15 @@
     "named": false
   },
   {
+    "type": "define-values",
+    "named": false
+  },
+  {
     "type": "delay",
+    "named": false
+  },
+  {
+    "type": "delay-force",
     "named": false
   },
   {
@@ -1320,11 +2463,39 @@
     "named": false
   },
   {
+    "type": "except",
+    "named": false
+  },
+  {
+    "type": "export",
+    "named": false
+  },
+  {
+    "type": "guard",
+    "named": false
+  },
+  {
     "type": "i",
     "named": false
   },
   {
     "type": "if",
+    "named": false
+  },
+  {
+    "type": "import",
+    "named": false
+  },
+  {
+    "type": "include",
+    "named": false
+  },
+  {
+    "type": "include-ci",
+    "named": false
+  },
+  {
+    "type": "include-library-declarations",
     "named": false
   },
   {
@@ -1344,7 +2515,39 @@
     "named": false
   },
   {
+    "type": "let-syntax",
+    "named": false
+  },
+  {
+    "type": "let-values",
+    "named": false
+  },
+  {
+    "type": "let-values*",
+    "named": false
+  },
+  {
     "type": "letrec",
+    "named": false
+  },
+  {
+    "type": "letrec*",
+    "named": false
+  },
+  {
+    "type": "letrec-syntax",
+    "named": false
+  },
+  {
+    "type": "load",
+    "named": false
+  },
+  {
+    "type": "not",
+    "named": false
+  },
+  {
+    "type": "only",
     "named": false
   },
   {
@@ -1352,7 +2555,19 @@
     "named": false
   },
   {
+    "type": "parameterize",
+    "named": false
+  },
+  {
+    "type": "prefix",
+    "named": false
+  },
+  {
     "type": "quasiquote",
+    "named": false
+  },
+  {
+    "type": "rename",
     "named": false
   },
   {
@@ -1369,6 +2584,10 @@
   },
   {
     "type": "syntax-rules",
+    "named": false
+  },
+  {
+    "type": "unless",
     "named": false
   },
   {

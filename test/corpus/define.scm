@@ -113,3 +113,58 @@ multi_args_procedures
       (identifier))
     (body
       (symbol))))
+
+===
+define_values
+===
+
+(define-values (a b . c)
+  (values 1 2 3))
+
+---
+
+(program
+  (binding_values
+    (bindings
+      (identifier)
+      (identifier)
+      (identifier))
+    (procedure_call
+      (identifier)
+      (arguments
+        (decimal_number)
+        (decimal_number)
+        (decimal_number)))))
+
+===
+record
+===
+
+(define-record-type
+  struct (make-struct a b c)
+  struct?
+  (a geta)
+  (b getb)
+  (c getc setc))
+
+---
+
+(program
+  (binding_record
+    type: (identifier)
+    (constructor
+      name: (identifier)
+      (identifier)
+      (identifier)
+      (identifier))
+    predicate: (identifier)
+    (field
+      name: (identifier)
+      accessor: (identifier))
+    (field
+      name: (identifier)
+      accessor: (identifier))
+    (field
+      name: (identifier)
+      accessor: (identifier)
+      mutator: (identifier))))

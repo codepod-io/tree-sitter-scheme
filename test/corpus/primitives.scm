@@ -53,3 +53,61 @@ quoted_datum
   (symbol)
   (symbol)
   (quote (list)))
+
+===
+byte_vetor
+===
+
+#u8(192 47 11 08 15 90 210)
+
+---
+
+(program
+  (byte_vector
+    (decimal_number)
+    (decimal_number)
+    (decimal_number)
+    (decimal_number)
+    (decimal_number)
+    (decimal_number)
+    (decimal_number)))
+
+======
+string
+======
+
+"test-string _|@1423g3"
+
+---
+
+(program
+  (string))
+
+====
+bool
+====
+
+#true
+#f
+
+---
+
+(program
+  (boolean)
+  (boolean))
+
+=====
+chars
+=====
+
+#\k
+#\x9f
+#\newline
+
+---
+
+(program
+  (character)
+  (character)
+  (character))
+

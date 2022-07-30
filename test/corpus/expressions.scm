@@ -18,6 +18,11 @@ procedure_call
 ===
 
 (+ 2 #d2)
+(read input-port)
+(read)
+((loadsomething))
+
+((action) arg1 (get-arg))
 
 ---
 
@@ -26,7 +31,23 @@ procedure_call
     name: (identifier)
     (arguments
       (decimal_number)
-      (decimal_number))))
+      (decimal_number)))
+  (procedure_call
+    name: (identifier)
+    (arguments
+      (identifier)))
+  (procedure_call
+    name: (identifier))
+  (procedure_call
+    name: (procedure_call
+            name: (identifier)))
+  (procedure_call
+    name: (procedure_call
+            name: (identifier))
+    (arguments
+      (identifier)
+      (procedure_call
+        name: (identifier)))))
 
 ===
 syntax_definition
@@ -36,6 +57,12 @@ syntax_definition
   (syntax-rules (reserved)
     ((ignored-identifier arg1 arg2)
      (return (+ arg1 arg2)))))
+
+(let-syntax
+  (amacro (syntax-rules ()
+            ((_ arg1 arg2)
+             (return (+ arg1 arg2)))))
+  'none)
 
 ---
 
@@ -57,31 +84,35 @@ syntax_definition
                 name: (identifier)
                 (arguments
                   (identifier)
-                  (identifier))))))))))
+                  (identifier)))))))))
+  (binding_let_syntax
+    (syntax_binding
+      keyword: (identifier)
+      (transformer
+        (reserved)
+        (syntax_rule
+          (pattern
+            (identifier)
+            (identifier)
+            (identifier))
+          (template
+            (procedure_call
+              name: (identifier)
+              (arguments
+                (procedure_call
+                  name: (identifier)
+                  (arguments
+                    (identifier)
+                    (identifier)))))))))
+    (body (symbol))))
 
 ===
-conditional
+if_conditional
 ===
 
 (if variable 'missing-branch)
 (if variable #true #false)
-(when variable 'body)
 
-(cond
-  ((and var1 var2) => 'and-test)
-  ((or var1 var2) 'or-test)
-  (var1)
-  (else 'alternaitve))
-
-(case variable
-  ((4) 'return)
-  ((2) => 'nonesense)
-  (() => 'reached)
-  (else => 'receipent))
-
-(case variable
-  (() 'return)
-  (else 'receipent))
 ---
 
 (program
@@ -91,10 +122,47 @@ conditional
   (if_conditional
     test: (identifier)
     consequence: (boolean)
-    alternative: (boolean))
+    alternative: (boolean)))
+
+===
+when_conditional
+===
+
+(when variable 'body)
+
+---
+
+(program
   (when_conditional
     test: (identifier)
-    body: (body (symbol)))
+    body: (body (symbol))))
+
+===
+unless_conditional
+===
+
+(unless variable 'body)
+
+---
+
+(program
+  (unless_conditional
+    test: (identifier)
+    body: (body (symbol))))
+
+===
+cond_conditional
+===
+
+(cond
+  ((and var1 var2) => 'and-test)
+  ((or var1 var2) 'or-test)
+  (var1)
+  (else 'alternaitve))
+
+---
+
+(program
   (cond_conditional
     (cond_clause
       test: (and_conditional (identifier) (identifier))
@@ -105,7 +173,25 @@ conditional
     (cond_clause
       test: (identifier))
     (else_clause
-      (body (symbol))))
+      (body (symbol)))))
+
+===
+case_conditional
+===
+
+(case variable
+  ((4) 'return)
+  ((2) => 'nonesense)
+  (() => 'reached)
+  (else => 'receipent))
+
+(case variable
+  (() 'return)
+  (else 'receipent))
+
+---
+
+(program
   (case_conditional
     on: (identifier)
     (case_clause
@@ -123,8 +209,7 @@ conditional
     (case_clause
       consequence: (body (symbol)))
     (else_clause
-      (body (symbol))))
-  )
+      (body (symbol)))))
 
 ===
 assignment
@@ -155,6 +240,11 @@ binding_let
 
 (letrec ((i (+ 2 1)))
   (lp (+ i 1)))
+
+(let-values
+  ((a 2)
+   ((a b c) (values 1 2 3)))
+  'end)
 
 ---
 
@@ -189,7 +279,23 @@ binding_let
             name: (identifier)
             (arguments
               (identifier)
-              (decimal_number))))))))
+              (decimal_number)))))))
+  (binding_let
+    (multi_bindings
+      formal: (identifier)
+      value: (decimal_number))
+    (multi_bindings
+      formal: (identifier)
+      formal: (identifier)
+      formal: (identifier)
+      value: (procedure_call
+               name: (identifier)
+               (arguments
+                 (decimal_number)
+                 (decimal_number)
+                 (decimal_number))))
+    (body
+      (symbol))))
 
 ===
 begin
@@ -258,6 +364,7 @@ delay
 ===
 
 (delay (+ 4 2))
+(delay-force 42)
 
 ---
 
@@ -266,4 +373,94 @@ delay
     (procedure_call
       name: (identifier)
       (arguments
-        (decimal_number) (decimal_number)))))
+        (decimal_number) (decimal_number))))
+  (delay
+    (decimal_number)))
+
+===
+parameterize
+===
+
+(parameterize ()
+  (read))
+
+(parameterize ((input-port (current-input-port)))
+  (read input-port))
+
+---
+
+(program
+  (parameterize
+    (body
+      (procedure_call
+        name: (identifier))))
+  (parameterize
+    (binding
+      name: (identifier)
+      value: (procedure_call
+        name: (identifier)))
+    (body
+      (procedure_call
+        name: (identifier)
+        (arguments
+          (identifier))))))
+
+===
+guard
+===
+
+(guard (value ((> value 0)))
+  (do-stuff))
+
+---
+
+(program
+  (guard
+    value: (identifier)
+    (guards
+      (guard
+        test: (procedure_call
+                name: (identifier)
+                (arguments
+                  (identifier)
+                  (decimal_number)))))
+    (body
+      (procedure_call
+        name: (identifier)))))
+
+===
+case_lambda
+===
+
+(case-lambda
+  (variable (call1) (call2))
+  ((var1 var2) (call1) (call2))
+  ((variable1 . rest) (call1) (call2)))
+
+---
+
+(program
+  (case_lambda
+    (clause
+      formal: (identifier)
+      (body
+        (procedure_call
+          name: (identifier))
+        (procedure_call
+          name: (identifier))))
+    (clause
+      formal: (identifier)
+      formal: (identifier)
+      (body
+        (procedure_call
+          name: (identifier))
+        (procedure_call
+          name: (identifier))))
+    (clause
+      formal: (identifier)
+      formal: (identifier)
+      (body
+        (procedure_call
+          name: (identifier))
+        (procedure_call
+          name: (identifier))))))

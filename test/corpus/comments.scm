@@ -1,9 +1,9 @@
 ===
-comments
+line_comments
 ===
 
-;; Comment like it R5RS
-(define *CONSTANT* ;; this is lisp, right?
+;; comment like its hot
+(define *CONSTANT* ;; lisp?
   (or #true #false)) ;; 42
 
 ---
@@ -16,3 +16,48 @@ comments
     value: (or_conditional
              (boolean) (boolean)))
   (comment))
+
+===
+uncommented_datum
+===
+
+#;(or var foo)
+
+---
+
+(program
+  (comment
+    (or_conditional
+      (identifier)
+      (identifier))))
+
+===
+labels
+===
+
+# 3 = (label? #t)
+# 4 #
+
+---
+
+(program
+  (label
+    (procedure_call
+      name: (identifier)
+      (arguments
+        (boolean))))
+  (label))
+
+===
+multiline_comment
+===
+
+#| This is a multiline
+  comment
+  end |#
+
+---
+
+(program
+  (comment))
+
