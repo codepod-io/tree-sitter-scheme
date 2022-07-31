@@ -408,27 +408,11 @@
     "named": true,
     "fields": {},
     "children": {
-      "multiple": true,
+      "multiple": false,
       "required": true,
       "types": [
         {
-          "type": "comment",
-          "named": true
-        },
-        {
-          "type": "definition",
-          "named": true
-        },
-        {
-          "type": "expression",
-          "named": true
-        },
-        {
-          "type": "label",
-          "named": true
-        },
-        {
-          "type": "primitives",
+          "type": "body",
           "named": true
         }
       ]
@@ -592,27 +576,11 @@
     "named": true,
     "fields": {
       "init": {
-        "multiple": true,
+        "multiple": false,
         "required": false,
         "types": [
           {
-            "type": "comment",
-            "named": true
-          },
-          {
-            "type": "definition",
-            "named": true
-          },
-          {
-            "type": "expression",
-            "named": true
-          },
-          {
-            "type": "label",
-            "named": true
-          },
-          {
-            "type": "primitives",
+            "type": "body",
             "named": true
           }
         ]

@@ -70,7 +70,6 @@ module.exports = grammar ({
       ),
     ),
 
-
     _scope: $ =>
     choice(
       $.definition,
@@ -454,7 +453,6 @@ module.exports = grammar ({
 
     bindings: $ => paren( seq($.identifier, $._token, )),
 
-    _body: $ => seq(repeat($._scope), $._sequence),
     _sequence: $ => seq(repeat($._token), $._token),
 
     ///////////////
@@ -487,14 +485,14 @@ module.exports = grammar ({
       seq(
         "define-values",
         alias($._formals, $.bindings),
-        field("init", repeat($._scope)),
+        field("init", alias(repeat($._scope), $.body )),
       ),
     ),
 
     binding_begin: $ =>
     paren(
       seq(
-        "begin", repeat1($._scope),
+        "begin", alias(repeat1($._scope), $.body),
       ),
     ),
 

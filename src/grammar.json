@@ -6371,22 +6371,6 @@
         }
       ]
     },
-    "_body": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "REPEAT",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_scope"
-          }
-        },
-        {
-          "type": "SYMBOL",
-          "name": "_sequence"
-        }
-      ]
-    },
     "_sequence": {
       "type": "SEQ",
       "members": [
@@ -6712,11 +6696,16 @@
                   "type": "FIELD",
                   "name": "init",
                   "content": {
-                    "type": "REPEAT",
+                    "type": "ALIAS",
                     "content": {
-                      "type": "SYMBOL",
-                      "name": "_scope"
-                    }
+                      "type": "REPEAT",
+                      "content": {
+                        "type": "SYMBOL",
+                        "name": "_scope"
+                      }
+                    },
+                    "named": true,
+                    "value": "body"
                   }
                 }
               ]
@@ -6754,11 +6743,16 @@
                   "type": "FIELD",
                   "name": "init",
                   "content": {
-                    "type": "REPEAT",
+                    "type": "ALIAS",
                     "content": {
-                      "type": "SYMBOL",
-                      "name": "_scope"
-                    }
+                      "type": "REPEAT",
+                      "content": {
+                        "type": "SYMBOL",
+                        "name": "_scope"
+                      }
+                    },
+                    "named": true,
+                    "value": "body"
                   }
                 }
               ]
@@ -6789,11 +6783,16 @@
                   "value": "begin"
                 },
                 {
-                  "type": "REPEAT1",
+                  "type": "ALIAS",
                   "content": {
-                    "type": "SYMBOL",
-                    "name": "_scope"
-                  }
+                    "type": "REPEAT1",
+                    "content": {
+                      "type": "SYMBOL",
+                      "name": "_scope"
+                    }
+                  },
+                  "named": true,
+                  "value": "body"
                 }
               ]
             },
@@ -6818,11 +6817,16 @@
                   "value": "begin"
                 },
                 {
-                  "type": "REPEAT1",
+                  "type": "ALIAS",
                   "content": {
-                    "type": "SYMBOL",
-                    "name": "_scope"
-                  }
+                    "type": "REPEAT1",
+                    "content": {
+                      "type": "SYMBOL",
+                      "name": "_scope"
+                    }
+                  },
+                  "named": true,
+                  "value": "body"
                 }
               ]
             },

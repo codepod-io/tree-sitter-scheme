@@ -29,9 +29,10 @@ library
         (identifier)))
     (library_declaration
       (binding_begin
-        (binding_variable
-          (identifier)
-          (boolean))))
+        (body
+          (binding_variable
+            (identifier)
+            (boolean)))))
     (library_declaration
       (includer
         (string)))

@@ -1,6 +1,6 @@
 {
   "name": "tree-sitter-scheme",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "r5/7rs-tree-sitter grammar",
   "main": "grammar.js",
   "scripts": {

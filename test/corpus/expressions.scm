@@ -311,9 +311,10 @@ begin
 
 (program
   (binding_begin
-    (binding_variable
-      name: (identifier)
-      value: (decimal_number)))
+    (body
+      (binding_variable
+        name: (identifier)
+        value: (decimal_number))))
   (binding_variable
     name: (identifier)
     value: (begin

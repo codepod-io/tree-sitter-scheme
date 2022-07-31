@@ -129,12 +129,13 @@ define_values
       (identifier)
       (identifier)
       (identifier))
-    (procedure_call
-      (identifier)
-      (arguments
-        (decimal_number)
-        (decimal_number)
-        (decimal_number)))))
+    (body
+      (procedure_call
+        (identifier)
+        (arguments
+          (decimal_number)
+          (decimal_number)
+          (decimal_number))))))
 
 ===
 record
