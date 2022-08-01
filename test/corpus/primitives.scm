@@ -52,7 +52,11 @@ quoted_datum
 (program
   (symbol)
   (symbol)
-  (quote (list)))
+  (quote
+    (list
+      (identifier)
+      (identifier)
+      (identifier))))
 
 ===
 byte_vetor

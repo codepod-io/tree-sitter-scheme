@@ -763,6 +763,10 @@
             "named": true
           },
           {
+            "type": "identifier",
+            "named": true
+          },
+          {
             "type": "list",
             "named": true
           },
@@ -776,7 +780,7 @@
           },
           {
             "type": "symbol",
-            "named": false
+            "named": true
           },
           {
             "type": "vector",
@@ -1677,6 +1681,10 @@
           "named": true
         },
         {
+          "type": "identifier",
+          "named": true
+        },
+        {
           "type": "list",
           "named": true
         },
@@ -1686,6 +1694,10 @@
         },
         {
           "type": "string",
+          "named": true
+        },
+        {
+          "type": "symbol",
           "named": true
         },
         {
@@ -2598,10 +2610,6 @@
   {
     "type": "string",
     "named": true
-  },
-  {
-    "type": "symbol",
-    "named": false
   },
   {
     "type": "syntax-rules",

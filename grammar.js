@@ -165,7 +165,8 @@ module.exports = grammar ({
       $.number,
       $.character,
       $.string,
-      alias($._identifier, "symbol"),
+      $.symbol,
+      $.identifier,
       $.byte_vector,
     ),
 
