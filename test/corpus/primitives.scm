@@ -111,3 +111,23 @@ chars
   (character)
   (character))
 
+===
+identifiers
+===
+
+1error
+^error
+no-error2
+#!key
+##internal
+...
+
+---
+
+(program
+  (decimal_number) (identifier)
+  (identifier)
+  (identifier)
+  (identifier (keyword))
+  (identifier (internal))
+  (identifier (elipsis)))

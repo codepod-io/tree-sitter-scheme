@@ -1338,6 +1338,14 @@
       "required": false,
       "types": [
         {
+          "type": "elipsis",
+          "named": true
+        },
+        {
+          "type": "internal",
+          "named": true
+        },
+        {
           "type": "keyword",
           "named": true
         }
@@ -1858,6 +1866,10 @@
           "named": true
         },
         {
+          "type": "elipsis",
+          "named": true
+        },
+        {
           "type": "identifier",
           "named": true
         },
@@ -2085,6 +2097,14 @@
       "multiple": false,
       "required": false,
       "types": [
+        {
+          "type": "elipsis",
+          "named": true
+        },
+        {
+          "type": "internal",
+          "named": true
+        },
         {
           "type": "keyword",
           "named": true
@@ -2355,10 +2375,6 @@
     "named": false
   },
   {
-    "type": "...",
-    "named": false
-  },
-  {
     "type": "=",
     "named": false
   },
@@ -2447,6 +2463,10 @@
     "named": false
   },
   {
+    "type": "elipsis",
+    "named": true
+  },
+  {
     "type": "else",
     "named": false
   },
@@ -2488,6 +2508,10 @@
   },
   {
     "type": "infnan",
+    "named": true
+  },
+  {
+    "type": "internal",
     "named": true
   },
   {

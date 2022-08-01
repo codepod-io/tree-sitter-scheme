@@ -533,9 +533,9 @@ module.exports = grammar ({
         alias( /[^(\.\.\.)\S]+/, $.identifier),
         paren( optional( repeat1($._pattern))),
         paren( seq( repeat1($._pattern), ".", $._pattern)),
-        paren( seq( repeat($._pattern), $._pattern, "..." )),
+        paren( seq( repeat($._pattern), $._pattern, $.elipsis)),
         seq("#", paren( repeat($._pattern))),
-        seq("#", paren( repeat($._pattern), $._pattern, "..." )),
+        seq("#", paren( repeat($._pattern), $._pattern, $.elipsis )),
         $.string, $.character, $.boolean, $.number
       ),
     ),
@@ -593,12 +593,16 @@ module.exports = grammar ({
     identifier: $ =>
       choice(
         $._identifier,
-        alias(/#!(key|optional|rest)/, $.keyword),
+        alias(token(/#!(key|optional|rest)/), $.keyword),
+        $.internal,
+        $.elipsis,
       ),
     vararg_identifier: $ => $._identifier,
       // cant match word boundary \b
       // // TODO: perculiar
-    _identifier: $ => token(/[A-Za-z!$%&*/:<=>?^_~]{1}[A-Za-z0-9!$%&*/:<=>?^_~+\-@\.]*|\.\.\.|\|([^\\|]*|\\x[A-Fa-f0-9]+|\\|\a|\t|\n|\r)*\|/),
+    _identifier: $ => token(/[A-Za-z!$%&*/:<=>?^_~]{1}[A-Za-z0-9!$%&*/:<=>?^_~+\-@\.]*|\|([^\\|]*|\\x[A-Fa-f0-9]+|\\|\a|\t|\n|\r)*\|/),
+    internal: $ => token(/##\S+/),
+    elipsis: $ => token("..."),
 
     //_identifier: $ =>
     //  prec.right(

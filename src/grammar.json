@@ -7264,8 +7264,8 @@
                         "name": "_pattern"
                       },
                       {
-                        "type": "STRING",
-                        "value": "..."
+                        "type": "SYMBOL",
+                        "name": "elipsis"
                       }
                     ]
                   },
@@ -7297,8 +7297,8 @@
                         "name": "_pattern"
                       },
                       {
-                        "type": "STRING",
-                        "value": "..."
+                        "type": "SYMBOL",
+                        "name": "elipsis"
                       }
                     ]
                   },
@@ -7948,11 +7948,22 @@
         {
           "type": "ALIAS",
           "content": {
-            "type": "PATTERN",
-            "value": "#!(key|optional|rest)"
+            "type": "TOKEN",
+            "content": {
+              "type": "PATTERN",
+              "value": "#!(key|optional|rest)"
+            }
           },
           "named": true,
           "value": "keyword"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "internal"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "elipsis"
         }
       ]
     },
@@ -7964,7 +7975,21 @@
       "type": "TOKEN",
       "content": {
         "type": "PATTERN",
-        "value": "[A-Za-z!$%&*/:<=>?^_~]{1}[A-Za-z0-9!$%&*/:<=>?^_~+\\-@\\.]*|\\.\\.\\.|\\|([^\\\\|]*|\\\\x[A-Fa-f0-9]+|\\\\|\\a|\\t|\\n|\\r)*\\|"
+        "value": "[A-Za-z!$%&*/:<=>?^_~]{1}[A-Za-z0-9!$%&*/:<=>?^_~+\\-@\\.]*|\\|([^\\\\|]*|\\\\x[A-Fa-f0-9]+|\\\\|\\a|\\t|\\n|\\r)*\\|"
+      }
+    },
+    "internal": {
+      "type": "TOKEN",
+      "content": {
+        "type": "PATTERN",
+        "value": "##\\S+"
+      }
+    },
+    "elipsis": {
+      "type": "TOKEN",
+      "content": {
+        "type": "STRING",
+        "value": "..."
       }
     },
     "arguments": {
