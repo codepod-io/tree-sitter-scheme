@@ -13,6 +13,7 @@ Due to my aim to query _language constructs_ it should be easy to provide querie
 
 * identifiers are not extended, yet
 * nested block-comments are not supported, yet
+* string escape sequences are not recognized, yet.
 The rest ist tested and working.
 
 # build

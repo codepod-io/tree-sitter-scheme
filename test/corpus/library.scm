@@ -37,6 +37,8 @@ library
       (includer
         (string)))
     (library_declaration
+      (string)
+      (string)
       (string))
     (library_declaration
       (cond_expand_clause

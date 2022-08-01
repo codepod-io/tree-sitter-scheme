@@ -23,7 +23,7 @@ variable
 lambda
 ======
 
-(lambda (arg1 arg2) 'variable)
+(lambda (arg1 #!key arg2) 'variable)
 
 ---
 
@@ -31,6 +31,8 @@ lambda
   (lambda
     (arguments
       (identifier)
+      (identifier
+        (keyword))
       (identifier))
     (body
       (symbol))))
@@ -56,6 +58,26 @@ no_args_procedures
       (arguments)
       (body
         (symbol)))))
+
+=============
+optional_args
+=============
+
+(define (proc1 #!optional (enc #t)) 'variable)
+
+---
+
+(program
+  (binding_procedure
+    name: (identifier)
+    (arguments
+      (identifier
+        (keyword))
+      (binding
+        (identifier)
+        (boolean)))
+    (body
+      (symbol))))
 
 ==========
 vararg_procedures

@@ -10,13 +10,18 @@ module.exports = grammar ({
     /\s/,
   ],
 
+  conflicts: $ => [
+    // introduced because of $.binding within _rest_arguments.
+    [$.binding_procedure, $._arguments],
+  ],
+
   supertypes: $ => [
-    $.derived_expr,
-    $.conditional,
-    $.number,
     $.definition,
     $.expression,
     $.primitives,
+    $.derived_expr,
+    $.conditional,
+    $.number,
   ],
 
   rules: {
@@ -72,7 +77,7 @@ module.exports = grammar ({
 
     _scope: $ =>
     choice(
-      $.definition,
+      prec.right( 1, $.definition ),
       prec( -1, $._token, ),
     ),
 
@@ -545,33 +550,35 @@ module.exports = grammar ({
     ),//}}}
 
     binding_procedure: $ =>
-    paren(
-      choice(
-        seq(
-          "define",
-          field("name", $.identifier),
-          $.lambda,
-        ),
-        seq(
-          "define",
-          paren(
+      prec(2,
+        paren(
+          choice(
             seq(
+              "define",
               field("name", $.identifier),
-              alias(
-                optional(
-                  choice(
-                    repeat1($.identifier),
-                    $._rest_arguments,
+              $.lambda,
+            ),
+            seq(
+              "define",
+              paren(
+                seq(
+                  field("name", $.identifier),
+                  alias(
+                    optional(
+                      choice(
+                        repeat1($.identifier),
+                        optional($._arguments),
+                      ),
+                    ),
+                  $.arguments
                   ),
                 ),
-                $.arguments
               ),
+              alias(repeat($._scope), $.body),
             ),
           ),
-          alias(repeat($._scope), $.body),
         ),
       ),
-    ),
 
 
     binding_variable: $ =>
@@ -579,19 +586,15 @@ module.exports = grammar ({
       seq(
         "define",
         field("name", $.identifier),
-        field("value",
-          choice(
-            $.primitives,
-            $.procedure_call,
-            $.conditional,
-            $.assignment,
-            $.derived_expr,
-          ),
-        ),
+        field("value", $._token),
       ),
     ),//}}}
 
-    identifier: $ => $._identifier,
+    identifier: $ =>
+      choice(
+        $._identifier,
+        alias(/#!(key|optional|rest)/, $.keyword),
+      ),
     vararg_identifier: $ => $._identifier,
       // cant match word boundary \b
       // // TODO: perculiar
@@ -624,22 +627,12 @@ module.exports = grammar ({
     //),
 
     // these are the arguments for a lambda.
-    arguments: $ =>
-    choice(
-      paren(optional(repeat1($.identifier))),
-      $.vararg_identifier,
-      paren(seq(repeat1($.identifier), ".", $.vararg_identifier)),
-    ),
+    arguments: $ => choice( paren($._arguments), $.vararg_identifier, seq("(", ")") ),
 
-    // this is for the packed form of a procedure
-    // where the arguments appear in the same nesting depth as the identifier.
-    _rest_arguments: $ =>
-    seq(
-      optional(
-        repeat1($.identifier),
-      ),
-      ".",
-      $.vararg_identifier
+    _arguments: $ =>
+      choice(
+        repeat1(choice($.identifier, $.binding)),
+        seq(repeat(choice($.identifier, $.binding)), ".", $.vararg_identifier),
     ),
 
     // TODO: catch the last expression as the return value.
@@ -670,7 +663,7 @@ module.exports = grammar ({
     token(
       choice(
         /#!\w/,
-        /#\\x[0-9a-f]+/,
+        /#\\x[0-9a-fA-F]+/,
         /#\\[^x]/,
         /#\\space/,
         /#\\newline/,
@@ -685,7 +678,7 @@ module.exports = grammar ({
     ),
     // TODO:  function, which prevents quote and backslash, but escapes them.
     // FIXME: should use character names.
-    string: $ => token( /".*"/ ),
+    string: $ => token( /"[^\"]*"/ ),
 
 
     //////////////
@@ -845,7 +838,7 @@ module.exports = grammar ({
       token(
         seq(
           choice( "+", "-", ""),
-          /[0-9a-f]+#*|[0-9a-f]+#*\/[0-9a-f]+#*/
+          /[0-9a-fA-F]+#*|[0-9a-fA-F]+#*\/[0-9a-fA-F]+#*/
         ),
       ),
     ),
