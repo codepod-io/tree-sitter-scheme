@@ -7979,11 +7979,17 @@
       }
     },
     "internal": {
-      "type": "TOKEN",
-      "content": {
-        "type": "PATTERN",
-        "value": "##\\S+"
-      }
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "##"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_identifier"
+        }
+      ]
     },
     "elipsis": {
       "type": "TOKEN",

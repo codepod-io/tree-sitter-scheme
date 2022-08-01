@@ -1481,6 +1481,11 @@
     }
   },
   {
+    "type": "internal",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "iteration_step",
     "named": true,
     "fields": {
@@ -2335,6 +2340,10 @@
     "named": false
   },
   {
+    "type": "##",
+    "named": false
+  },
+  {
     "type": "#;",
     "named": false
   },
@@ -2508,10 +2517,6 @@
   },
   {
     "type": "infnan",
-    "named": true
-  },
-  {
-    "type": "internal",
     "named": true
   },
   {
