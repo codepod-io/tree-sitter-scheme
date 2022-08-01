@@ -601,7 +601,7 @@ module.exports = grammar ({
     vararg_identifier: $ => $._identifier,
       // cant match word boundary \b
       // // TODO: perculiar
-    _identifier: $ => token(/[A-Za-z!$%&*/:<=>?^_~]{1}[A-Za-z0-9!$%&*/:<=>?^_~+\-@\.]*|\|([^\\|]*|\\x[A-Fa-f0-9]+|\\|\a|\t|\n|\r)*\|/),
+    _identifier: $ => token(/[A-Za-z!$%&*/:<=>?^_~]{1}[A-Za-z0-9!$%&*/:<=>?^_~+\-@\.#]*|\|([^\\|]*|\\x[A-Fa-f0-9]+|\\|\a|\t|\n|\r)*\|/),
     // these should use _subsequent instead:
     internal: $ => seq("##", $._identifier),
     elipsis: $ => token("..."),

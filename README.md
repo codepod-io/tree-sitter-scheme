@@ -16,6 +16,12 @@ Due to my aim to query _language constructs_ it should be easy to provide querie
 * string escape sequences are not recognized, yet.
 The rest ist tested and working.
 
+# extensions
+
+gambits internal identifiers are allowed.
+gambit allows # in identifiers as well.
+gambits keyword-arguments are supported.
+
 # build
 
 ```
